@@ -6,7 +6,7 @@ import paramiko
 import time
 
 # tady das svuj discord webhook
-WEBHOOK_URL = "https://discord.com/api/webhooks/ТВОЙ_WEBHOOK_SEM"
+WEBHOOK_URL = "https://discord.com/api/webhooks/ТVUJ_WEBHOOK_SEM"
 
 # na jakem portu poslouchat (2222 nechce root, 22 chce)
 PORT = 2222
