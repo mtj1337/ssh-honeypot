@@ -5,12 +5,13 @@ from datetime import datetime
 import paramiko
 import time
 import json
+import os
 
 # tady das svuj discord webhook
-WEBHOOK_URL = "https://discord.com/api/webhooks/YOUR_WEBHOOK_HERE"
+WEBHOOK_URL = "https://discord.com/api/webhooks/ТVUJ_WEBHOOK_SEM"
 
-# na jakem portu poslouchat (2222 nechce root, 22 chce)
-PORT = 2223
+# na jakem portu poslouchat (22 vyzaduje root)
+PORT = 22
 
 # po kolika sekundach poslat souhrnnou zpravu
 OKNO_SEKUND = 60
@@ -24,7 +25,9 @@ def uloz_pokus(zaznam):
         with open(LOG_FILE, "a") as f:
             f.write(json.dumps(zaznam) + "\n")
 
-# vygeneruj klic: ssh-keygen -t rsa -f server.key
+if not os.path.exists("server.key"):
+    k = paramiko.RSAKey.generate(2048)
+    k.write_private_key_file("server.key")
 HOST_KEY = paramiko.RSAKey(filename="server.key")
 
 # fronta pokusu cekajicich na odeslani
