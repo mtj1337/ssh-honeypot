@@ -4,15 +4,25 @@ import requests
 from datetime import datetime
 import paramiko
 import time
+import json
 
 # tady das svuj discord webhook
-WEBHOOK_URL = "https://discord.com/api/webhooks/ТVUJ_WEBHOOK_SEM"
+WEBHOOK_URL = "https://discord.com/api/webhooks/YOUR_WEBHOOK_HERE"
 
 # na jakem portu poslouchat (2222 nechce root, 22 chce)
-PORT = 2222
+PORT = 2223
 
 # po kolika sekundach poslat souhrnnou zpravu
 OKNO_SEKUND = 60
+
+LOG_FILE = "log.json"
+_log_zamek = threading.Lock()
+
+
+def uloz_pokus(zaznam):
+    with _log_zamek:
+        with open(LOG_FILE, "a") as f:
+            f.write(json.dumps(zaznam) + "\n")
 
 # vygeneruj klic: ssh-keygen -t rsa -f server.key
 HOST_KEY = paramiko.RSAKey(filename="server.key")
@@ -68,8 +78,10 @@ def _odeslat_souhrnnou_zpravu():
 def posli_na_discord(ip, port, uzivatel, heslo):
     # prida pokus do fronty, odesle se az v dalsim okne
     cas = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    zaznam = {"cas": cas, "ip": ip, "port": port, "uzivatel": uzivatel, "heslo": heslo}
+    uloz_pokus(zaznam)
     with _zamek:
-        _fronta.append({"cas": cas, "ip": ip, "port": port, "uzivatel": uzivatel, "heslo": heslo})
+        _fronta.append(zaznam)
 
 
 class HoneypotServer(paramiko.ServerInterface):
